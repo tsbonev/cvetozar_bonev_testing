@@ -3,18 +3,18 @@ package com.clouway.crm.core.Sumator;
 import java.util.ArrayList;
 import java.util.EmptyStackException;
 
-public class ExceptionList {
+public class ObjectList {
 
     ArrayList<Object> attributes;
-    static final int SIZE = 1;
+    final int SIZE = 1;
 
-    public ExceptionList(){
+    public ObjectList(){
         this.attributes = new ArrayList<Object>(SIZE);
     }
 
     public boolean add(Object obj){
         try{
-            if(attributes.size() + 1 > SIZE){
+            if(attributes.size() == SIZE){
                 throw new IndexOutOfBoundsException();
             }
             attributes.add(obj);
