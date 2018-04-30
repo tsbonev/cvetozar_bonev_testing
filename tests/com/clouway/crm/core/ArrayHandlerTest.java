@@ -6,24 +6,22 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ArrayHandlerTest {
 
-    static ArrayHandler handler = new ArrayHandler();
+    ArrayHandler handler = new ArrayHandler();
 
     @Test
-    void testReverseArray() {
-        int[] testArr = {1, 2, 3};
-        int[] testReverse = {3, 2, 1};
-        assertArrayEquals(testArr, handler.reverseArray(testReverse));
+    void reverseArray() {
+        assertArrayEquals(new int[] {1, 2, 3}, handler.reverseArray(new int[] {3, 2, 1}));
     }
 
     @Test
-    void testDoQuickSort() {
+    void doQuickSort() {
         int[] testArr = {1, 2, 3};
         int[] testSort = {1, 3, 2};
-        assertArrayEquals(testArr, handler.doQuickSort(testSort));
+        assertArrayEquals(testArr, handler.doQuickSort(testSort, new int[]{}));
     }
 
     @Test
-    void testGetMinElement() {
+    void getMinElement() {
 
         int[] testArr = {1, 2, 3};
         assertEquals(1, handler.getMinElement(testArr));
@@ -31,15 +29,15 @@ class ArrayHandlerTest {
     }
 
     @Test
-    void testGetSum() {
+    void getSum() {
         int[] testArr = {1, 2, 3};
         assertEquals(6, handler.getSum(testArr));
     }
 
     @Test
-    void testPrintArray() {
+    void printArray() {
         int[] testArr = {1, 2, 3};
-        String testStr = "123";
+        String testStr = "[1, 2, 3]";
         assertEquals(testStr, handler.printArray(testArr));
     }
 }
