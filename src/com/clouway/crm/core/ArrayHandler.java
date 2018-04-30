@@ -1,8 +1,10 @@
 package com.clouway.crm.core;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class ArrayHandler {
 
-    private int[] returnArray; //handler's own copy of an array
     private int currentIndex; // handler's own value of an index
 
     /**
@@ -25,7 +27,7 @@ public class ArrayHandler {
      * @param i the first element to exchange
      * @param j the second element to exchange
      */
-    private void exchange(int i, int j){
+    private void exchange(int i, int j, int[] returnArray){
         int temp = returnArray[i];
         returnArray[i] = returnArray[j];
         returnArray[j] = temp;
@@ -36,7 +38,7 @@ public class ArrayHandler {
      * @param low beginning of area or left wall
      * @param high end of area or right wall
      */
-    private void quickSort(int low, int high){
+    private void quickSort(int low, int high, int[] returnArray){
         int i = low, j = high;
         int pivot = returnArray[low + (high - low)/2];
 
@@ -49,16 +51,16 @@ public class ArrayHandler {
             }
 
             if(i <= j){ //once the indexes of the two candidates for exchanging are found exchange them
-                exchange(i, j);
+                exchange(i, j, returnArray);
                 i++; //move the index forward
                 j--; //move the index back
             }
 
             if(low < j){ //first partition stops when it reaches the left wall + 1
-                quickSort(low, j);
+                quickSort(low, j, returnArray);
             }
             if(i < high){ //second partition stops when it reaches the right wall - 1
-                quickSort(i, high);
+                quickSort(i, high, returnArray);
             }
 
         }
@@ -69,10 +71,10 @@ public class ArrayHandler {
      * @param array the array passed into the sortArray method
      * @return the sorted array
      */
-    public int[] doQuickSort(int[] array){
-        this.returnArray = array.clone();
+    public int[] doQuickSort(int[] array, int[] returnArray){
+        returnArray = array.clone();
         currentIndex = array.length;
-        quickSort(0, currentIndex - 1);
+        quickSort(0, currentIndex - 1,returnArray);
         return returnArray;
     }
 
@@ -115,12 +117,7 @@ public class ArrayHandler {
      * @param array the array to be printed
      */
     public String printArray(int [] array){
-
-        String result = "";
-        for (int i : array) {
-            result += i;
-        }
-        return result;
+        return Arrays.toString(array);
     }
 
 }
