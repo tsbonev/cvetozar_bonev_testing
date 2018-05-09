@@ -2,14 +2,16 @@ package com.clouway.crm.core.Sumator;
 
 import java.util.ArrayList;
 import java.util.EmptyStackException;
+import java.util.List;
 
 public class ObjectList {
 
-    ArrayList<Object> attributes;
-    final int SIZE = 1;
+    List<Object> attributes;
+    final int SIZE;
 
-    public ObjectList(){
-        this.attributes = new ArrayList<Object>(SIZE);
+    public ObjectList(int size){
+        this.SIZE = size;
+        this.attributes = new ArrayList<>(SIZE);
     }
 
     public boolean add(Object obj){

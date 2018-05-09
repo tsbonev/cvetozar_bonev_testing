@@ -7,20 +7,20 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SumatorTest {
 
-    static Sumator sumator = new Sumator();
+    Sumator sumator = new Sumator();
 
     @Test
-    void testSum() {
+    void characterIsPassedAsNumber() {
         assertEquals("4", sumator.sum("2", "2"));
     }
 
     @Test
-    void testArgumentException(){
+    void invalidNumberFormatPass(){
         assertThrows(NumberFormatException.class, () -> sumator.sum("a", "b"));
     }
 
     @Test
-    void testIllegalArgumentException(){
+    void nullArgumentPass(){
         assertThrows(IllegalArgumentException.class, () -> sumator.sum((String)null, (String)null));
     }
 }
