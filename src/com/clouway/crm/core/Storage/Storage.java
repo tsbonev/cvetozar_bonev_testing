@@ -1,6 +1,8 @@
 package com.clouway.crm.core.Storage;
 
 import com.clouway.crm.core.Storage.StorageExceptions.*;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import java.util.*;
 
 public class Storage {
@@ -19,7 +21,16 @@ public class Storage {
         this.items.put(item, 0);
     }
 
-    private Product getProduct(String name){
+    public void remove(String name)
+    throws NoSuchProductException{
+        Product item = getProduct(name);
+        if(item == null) throw new NoSuchProductException();
+
+        items.remove(item);
+
+    }
+
+    public Product getProduct(String name){
         return items.keySet().stream().filter(c -> c.getName() == name).findFirst().orElse(null);
     }
 
@@ -28,10 +39,11 @@ public class Storage {
     }
 
     public void stock(String name, int amount)
-    throws NoSuchProductException{
+    throws NoSuchProductException, MaxQuantityException{
 
         Product item = getProduct(name);
         if(item == null) throw new NoSuchProductException();
+        if(items.get(item) + amount > item.getMaxQuantity()) throw new MaxQuantityException();
 
         int count = items.get(item);
         items.put(item, count + amount);
@@ -46,5 +58,20 @@ public class Storage {
         int count = items.get(item);
         items.put(item, count - amount);
     }
+
+    private class PriceComparator implements Comparator<Product>{
+        @Override
+        public int compare(Product o1, Product o2) {
+            return o1.getPrice() > o2.getPrice() ? -1 :(o1.getPrice() < o2.getPrice() ? 1 : 0);
+        }
+    }
+
+    public List sort(){
+        List result = new ArrayList<Product>(items.keySet());
+        result.sort(new PriceComparator());
+        return result;
+    }
+
+
 
 }
