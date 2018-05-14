@@ -2,3 +2,5 @@ out
 *iml
 *ipr
 .idea
+lib/
+tests/com/clouway/crm/core/addressfilter/ExplainedEndpointFilterTest.java
