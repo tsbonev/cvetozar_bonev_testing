@@ -12,17 +12,24 @@ public class UserRepository {
 
     }
 
-    public void registerUser(User user) {
+    public void registerUser(User user)
+    throws IllegalArgumentException{
 
         if(validator.validate(user.getAge())){
             userDB.addUser(user);
         }
-
+        else throw new IllegalArgumentException();
 
     }
 
     public boolean isAdult(String name) {
+
+        if(userDB.contains(name)){
+            return Integer.parseInt(userDB.getUserByName(name).getAge()) >= 18;
+        }
+
         return false;
+
     }
 
 

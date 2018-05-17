@@ -1,17 +1,11 @@
 package com.clouway.crm.core.age_validator;
 
-import java.util.*;
+public interface UserDB {
 
-public class UserDB {
+    void addUser(User user);
 
-    List<User> userList;
+    boolean contains(String name);
 
-    public UserDB(){
-        this.userList = new ArrayList<>();
-    }
-
-    public void addUser(User user){
-        this.userList.add(user);
-    }
+    User getUserByName(String name);
 
 }
