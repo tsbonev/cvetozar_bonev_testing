@@ -35,8 +35,7 @@ class MessengerTest {
 
         context.checking(new Expectations(){{
 
-            oneOf(message).isValid(title, invalidContent); will(returnValue(!Strings.isNullOrEmpty(title)
-                    && invalidContent.matches(".{1,120}")));
+            oneOf(message).isValid(title, invalidContent); will(returnValue(false));
 
         }});
 
@@ -55,7 +54,7 @@ class MessengerTest {
 
         context.checking(new Expectations(){{
 
-            oneOf(messenger).sendMessage(receiver, message); will(returnValue(receiver != null));
+            oneOf(messenger).sendMessage(receiver, message); will(returnValue(false));
 
         }});
 
@@ -74,8 +73,8 @@ class MessengerTest {
 
         context.checking(new Expectations(){{
 
-            oneOf(messenger).sendMessage(receiver, message); will(returnValue(message != null));
-            oneOf(receiver).receiveMessage(message); will(returnValue(message == null ? null : "some message"));
+            oneOf(messenger).sendMessage(receiver, message); will(returnValue(false));
+            oneOf(receiver).receiveMessage(message); will(returnValue(null));
 
         }});
 
@@ -98,8 +97,8 @@ class MessengerTest {
 
         context.checking(new Expectations(){{
 
-            oneOf(message).isValid(title, content); will(returnValue(content.matches(".{1,120}")));
-            oneOf(messenger).sendMessage(receiver, message); will(returnValue(receiver != null));
+            oneOf(message).isValid(title, content); will(returnValue(true));
+            oneOf(messenger).sendMessage(receiver, message); will(returnValue(true));
             oneOf(receiver).receiveMessage(message); will(returnValue(title + " " + content));
         }});
 
@@ -117,8 +116,7 @@ class MessengerTest {
 
         context.checking(new Expectations(){{
 
-            oneOf(message).isValid(title, content); will(returnValue(!Strings.isNullOrEmpty(title)
-                    && content.matches(".{1,120}")));
+            oneOf(message).isValid(title, content); will(returnValue(true));
 
         }});
 
