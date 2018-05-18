@@ -84,6 +84,8 @@ class UserRepositoryTest {
         final UserDB userDB = context.mock(UserDB.class);
         final Validator validator = context.mock(Validator.class);
 
+        UserRepository repo = new UserRepository(userDB, validator);
+
         context.checking(new Expectations(){{
 
             oneOf(userDB).contains(adultUser.getName()); will(returnValue(true));
@@ -94,8 +96,9 @@ class UserRepositoryTest {
 
         }});
 
-        assertThat(new UserRepository(userDB, validator).isAdult(adultUser.getName()), is(true));
-        assertThat(new UserRepository(userDB, validator).isAdult(nonAdultUser.getName()), is(false));
+
+        assertThat(repo.isAdult(adultUser.getName()), is(true));
+        assertThat(repo.isAdult(nonAdultUser.getName()), is(false));
 
         context.assertIsSatisfied();
 
