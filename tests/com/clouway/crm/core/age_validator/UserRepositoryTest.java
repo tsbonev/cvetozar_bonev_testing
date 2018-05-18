@@ -14,71 +14,6 @@ class UserRepositoryTest {
     Mockery context = new Mockery();
 
     @Test
-    public void validateCorrectAge(){
-
-        final String age = "10";
-
-        final Validator validator = context.mock(Validator.class);
-
-        context.checking(new Expectations(){{
-
-            oneOf(validator).validate(age); will(returnValue(Integer.parseInt(age) >= 10 &&
-            Integer.parseInt(age) <= 100));
-
-        }});
-
-        assertThat(validator.validate(age), is(true));
-
-        context.assertIsSatisfied();
-
-    }
-
-    @Test
-    public void rejectIncorrectAge(){
-
-        final String ageYoung = "9";
-        final String ageOld = "111";
-
-        final Validator validator = context.mock(Validator.class);
-
-        context.checking(new Expectations(){{
-
-            oneOf(validator).validate(ageOld); will(returnValue(Integer.parseInt(ageOld) >= 10 &&
-                    Integer.parseInt(ageOld) <= 100));
-
-            oneOf(validator).validate(ageYoung); will(returnValue(Integer.parseInt(ageYoung) >= 10 &&
-                    Integer.parseInt(ageYoung) <= 100));
-
-        }});
-
-        assertThat(validator.validate(ageOld), is(false));
-        assertThat(validator.validate(ageYoung), is(false));
-
-        context.assertIsSatisfied();
-
-
-    }
-
-    @Test
-    void throwExceptionForInvalidAgeFormat(){
-
-        final String age = "twelve";
-
-        final Validator validator = context.mock(Validator.class);
-
-        context.checking(new Expectations(){{
-
-            oneOf(validator).validate(age); will(throwException(new NumberFormatException()));
-
-        }});
-
-        assertThrows(NumberFormatException.class, () -> validator.validate(age));
-
-        context.assertIsSatisfied();
-
-    }
-
-    @Test
     void nullOrEmptyUserReject(){
 
         assertThrows(IllegalArgumentException.class, () -> new User("", null));
@@ -96,10 +31,7 @@ class UserRepositoryTest {
 
         context.checking(new Expectations(){{
 
-            oneOf(validator).validate(user.getAge()); will(returnValue(
-                    Integer.parseInt(user.getAge()) >= 10
-                    && Integer.parseInt(user.getAge()) <= 100
-            ));
+            oneOf(validator).validate(user.getAge()); will(returnValue(true));
 
             oneOf(userDB).addUser(user);
 
@@ -123,17 +55,11 @@ class UserRepositoryTest {
 
         context.checking(new Expectations(){{
 
-            oneOf(validator).validate(oldUser.getAge()); will(returnValue(
-                    Integer.parseInt(oldUser.getAge()) >= 10
-                            && Integer.parseInt(oldUser.getAge()) <= 100
-            ));
+            oneOf(validator).validate(oldUser.getAge()); will(returnValue(false));
 
             never(userDB).addUser(oldUser);
 
-            oneOf(validator).validate(youngUser.getAge()); will(returnValue(
-                    Integer.parseInt(youngUser.getAge()) >= 10
-                            && Integer.parseInt(youngUser.getAge()) <= 100
-            ));
+            oneOf(validator).validate(youngUser.getAge()); will(returnValue(false));
 
             never(userDB).addUser(youngUser);
 
