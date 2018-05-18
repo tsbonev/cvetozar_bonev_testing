@@ -21,7 +21,7 @@ class EndpointFilterTest {
 
         context.checking(new Expectations(){{
 
-            oneOf (endpoint).matches(url); will(returnValue(url.matches("url")));
+            oneOf (endpoint).matches(url); will(returnValue(true));
 
         }});
 
@@ -39,7 +39,7 @@ class EndpointFilterTest {
         final String url = "123";
 
         context.checking(new Expectations(){{
-            allowing (endpoint).matches(url); will(returnValue(url.matches("url")));
+            allowing (endpoint).matches(url); will(returnValue(false));
         }});
 
         filter = new EndpointFilter(endpoint);
@@ -59,10 +59,10 @@ class EndpointFilterTest {
 
         context.checking(new Expectations(){{
 
-            oneOf(endpoint).matches(url); will(returnValue(url.matches("123")));
-            oneOf(endpoint).matches("123"); will(returnValue("123".matches(url)));
+            oneOf(endpoint).matches(url); will(returnValue(true));
+            oneOf(endpoint).matches("123"); will(returnValue(true));
 
-            exactly(4).of(endpoint).matches(anotherUrl); will(returnValue(anotherUrl.matches(url)));
+            exactly(4).of(endpoint).matches(anotherUrl); will(returnValue(false));
 
             never(endpoint).matches("never");
 
@@ -88,8 +88,8 @@ class EndpointFilterTest {
 
         context.checking(new Expectations(){{
 
-            oneOf(startsWith).matches(url); will(returnValue(url.startsWith(keyword)));
-            exactly(2).of(startsWith).matches(anotherUrl); will(returnValue(anotherUrl.startsWith(keyword)));
+            oneOf(startsWith).matches(url); will(returnValue(true));
+            exactly(2).of(startsWith).matches(anotherUrl); will(returnValue(false));
 
         }});
 
