@@ -1,12 +1,10 @@
 package com.clouway.crm.core.messagesystem;
 
 import com.google.common.base.Strings;
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.Rule;
 import org.junit.Test;
-import sun.util.resources.cldr.as.LocaleNames_as;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
