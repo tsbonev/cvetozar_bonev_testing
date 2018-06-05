@@ -11,7 +11,7 @@ import sun.util.resources.cldr.as.LocaleNames_as;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class MessageSystemTest {
+public class MessageSenderTest {
 
     @Rule
     public JUnitRuleMockery context = new JUnitRuleMockery();
@@ -142,7 +142,7 @@ public class MessageSystemTest {
         public boolean sendMessageToSystem(Message message)
         throws  NoServiceException{
 
-            if(sender == null) throw new NoServiceException();
+            if(system == null) throw new NoServiceException();
 
             if(validator.validate(message)) return system.sendMsg(message);
 
