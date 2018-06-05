@@ -1,75 +1,171 @@
 package com.clouway.crm.core.messagesystem;
 
-
+import com.google.common.base.Strings;
+import com.sun.javaws.exceptions.InvalidArgumentException;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.Rule;
 import org.junit.Test;
+import sun.util.resources.cldr.as.LocaleNames_as;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 public class MessageSystemTest {
 
-
     @Rule
     public JUnitRuleMockery context = new JUnitRuleMockery();
 
-    MessageSystem messageSystem = context.mock(MessageSystem.class);
+    MessageSystem system = context.mock(MessageSystem.class);
+
+    MessageValidator validator = new MessageValidator();
+
+    MessageSender sender = new MessageSender(system, validator);
 
     @Test
-    public void sendCorrectMessage(){
+    public void sendCorrectMessage()
+    throws NoServiceException{
 
-        Receiver receiver = new Receiver();
-
-        final String text = "This is a message text";
-        final String title = "This is the message title";
-
-        Message message = new Message(receiver, title, text);
+        Message message = new Message("089-000-000", "title", "text");
 
         context.checking(new Expectations(){{
-
-            oneOf(messageSystem).receiveMsg(message); will(returnValue(true));
-
+            oneOf(system).sendMsg(message); will(returnValue(true));
         }});
 
+        assertThat(sender.sendMessageToSystem(message), is(true));
 
-        assertThat(messageSystem.receiveMsg(message), is(true));
+    }
+
+
+    @Test
+    public void sendMessageWithNoReceiver()
+    throws NoServiceException{
+
+        Message message = new Message (null, "title", "text");
+
+        context.checking(new Expectations(){{
+            never(system).sendMsg(message);
+        }});
+
+        assertThat(sender.sendMessageToSystem(message), is(false));
 
     }
 
     @Test
-    public void sendMessageWithTooManyCharacters(){
+    public void sendMessageWithNullOrEmptyContent()
+    throws NoServiceException{
 
-        Receiver receiver = new Receiver();
+        Message message = new Message(null, "", "   ");
 
-        StringBuilder builder = new StringBuilder();
-        builder
-        final String text =
+        context.checking(new Expectations(){{
+            never(system).sendMsg(message);
+        }});
+
+        assertThat(sender.sendMessageToSystem(message), is(false));
+
+    }
+
+    @Test
+    public void sendMessageWithOverlyLongText()
+    throws NoServiceException{
+
+        String text = Strings.repeat("1", 121);
+
+        Message message = new Message("083-435-233", "title", text);
+
+        context.checking(new Expectations(){{
+            never(system).sendMsg(message);
+        }});
+
+        assertThat(sender.sendMessageToSystem(message), is(false));
+
+    }
+
+    @Test (expected = NoServiceException.class)
+    public void sendCorrectMessageToBrokenSystem()
+    throws NoServiceException{
+
+        sender = new MessageSender(null, validator);
+
+        Message message = new Message("this", "is", "correct");
+
+        context.checking(new Expectations(){{
+            never(system).sendMsg(message); will(returnValue(false));
+        }});
+
+        sender.sendMessageToSystem(message);
 
     }
 
     private class Message {
 
-
-        private Receiver receiver;
+        private String receiver;
         private String title;
         private String text;
 
-        public Message(Receiver receiver, String  title, String text){
-
+        public Message(String receiver, String title, String text){
             this.receiver = receiver;
             this.title = title;
             this.text = text;
+        }
 
+        public  boolean hasNullContent(){
+            return (Strings.isNullOrEmpty(getText())
+                    || Strings.isNullOrEmpty(getTitle())
+                    || Strings.isNullOrEmpty(getReceiver()));
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public String getReceiver() {
+            return receiver;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+    }
+
+
+    private class MessageSender {
+
+        private MessageSystem system;
+        private MessageValidator validator;
+
+        public MessageSender(MessageSystem system, MessageValidator validator){
+            this.system = system;
+            this.validator = validator;
+        }
+
+        public boolean sendMessageToSystem(Message message)
+        throws  NoServiceException{
+
+            if(sender == null) throw new NoServiceException();
+
+            if(validator.validate(message)) return system.sendMsg(message);
+
+            return false;
         }
 
     }
 
-    private class Receiver {
+    private class MessageValidator{
+
+        public boolean validate(Message message){
+            if(message.hasNullContent()) return false;
+
+            if(message.text.length() > 120) return false;
+
+            return true;
+        }
+
     }
 
     private interface MessageSystem {
-        boolean receiveMsg(Message message);
+
+        boolean sendMsg(Message message);
+
     }
 }
