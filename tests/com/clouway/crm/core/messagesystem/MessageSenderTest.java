@@ -16,7 +16,7 @@ public class MessageSenderTest {
 
     MessageSystem system = context.mock(MessageSystem.class);
 
-    MessageValidator validator = new MessageValidator();
+    MessageValidator validator = context.mock(MessageValidator.class);
 
     MessageSender sender = new MessageSender(system, validator);
 
@@ -27,6 +27,7 @@ public class MessageSenderTest {
         Message message = new Message("089-000-000", "title", "text");
 
         context.checking(new Expectations(){{
+            oneOf(validator).validate(message); will(returnValue(true));
             oneOf(system).sendMsg(message); will(returnValue(true));
         }});
 
@@ -42,6 +43,7 @@ public class MessageSenderTest {
         Message message = new Message (null, "title", "text");
 
         context.checking(new Expectations(){{
+            oneOf(validator).validate(message); will(returnValue(false));
             never(system).sendMsg(message);
         }});
 
@@ -56,6 +58,7 @@ public class MessageSenderTest {
         Message message = new Message(null, "", "   ");
 
         context.checking(new Expectations(){{
+            oneOf(validator).validate(message); will(returnValue(false));
             never(system).sendMsg(message);
         }});
 
@@ -72,6 +75,7 @@ public class MessageSenderTest {
         Message message = new Message("083-435-233", "title", text);
 
         context.checking(new Expectations(){{
+            oneOf(validator).validate(message); will(returnValue(false));
             never(system).sendMsg(message);
         }});
 
@@ -88,7 +92,8 @@ public class MessageSenderTest {
         Message message = new Message("this", "is", "correct");
 
         context.checking(new Expectations(){{
-            never(system).sendMsg(message); will(returnValue(false));
+            never(validator).validate(message);
+            never(system).sendMsg(message);
         }});
 
         sender.sendMessageToSystem(message);
@@ -97,33 +102,9 @@ public class MessageSenderTest {
 
     private class Message {
 
-        private String receiver;
-        private String title;
-        private String text;
-
         public Message(String receiver, String title, String text){
-            this.receiver = receiver;
-            this.title = title;
-            this.text = text;
         }
 
-        public  boolean hasNullContent(){
-            return (Strings.isNullOrEmpty(getText())
-                    || Strings.isNullOrEmpty(getTitle())
-                    || Strings.isNullOrEmpty(getReceiver()));
-        }
-
-        public String getText() {
-            return text;
-        }
-
-        public String getReceiver() {
-            return receiver;
-        }
-
-        public String getTitle() {
-            return title;
-        }
     }
 
 
@@ -149,15 +130,9 @@ public class MessageSenderTest {
 
     }
 
-    private class MessageValidator{
+    private interface MessageValidator{
 
-        public boolean validate(Message message){
-            if(message.hasNullContent()) return false;
-
-            if(message.text.length() > 120) return false;
-
-            return true;
-        }
+        boolean validate(Message message);
 
     }
 
